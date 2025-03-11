@@ -1,0 +1,13 @@
+# depslib dependency file v1.0
+1741660212 source:d:\onedrive - vnu.edu.vn\documents\codeblocks\24022713_baitaplon\main.cpp
+	<iostream>
+	<SDL.h>
+
+1741659998 source:d:\onedrive - vnu.edu.vn\documents\codeblocks\24022713_baitaplon\testsdl.cpp
+	<iostream>
+	<SDL.h>
+
+1741660212 source:d:\code\24022713_baitaplon\main.cpp
+	<iostream>
+	<SDL.h>
+
