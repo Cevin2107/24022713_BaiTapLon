@@ -2,6 +2,7 @@
 #define GAME_H
 
 #include <SDL.h>
+#include <SDL_image.h>
 #include <vector>
 
 using namespace std;
@@ -29,14 +30,16 @@ private:
     SDL_Rect gate; // Cổng
     bool gameOver;
     bool levelPassed;
+    SDL_Texture* logoTexture; // Texture cho logo
+    SDL_Rect logoRect;        // Vị trí và kích thước logo
 
-    // Các size px
+    // Size màn hình
     const int SCREEN_WIDTH = 1089; // Chiều rộng màn hình
     const int SCREEN_HEIGHT = 612; // Chiều cao màn hình
     const int ACTIVE_ZONE_WIDTH = 856; // Chiều rộng vùng hoạt động
     const int ACTIVE_ZONE_HEIGHT = 121; // Chiều cao vùng hoạt động
     const int FLOOR_THICKNESS = 5; // Độ dày của sàn
-    const int HOLE_WIDTH = 40; // Chiều rộng của lỗ
+    const int HOLE_WIDTH = 35; // Chiều rộng của lỗ
 };
 
 #endif

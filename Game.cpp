@@ -10,6 +10,7 @@ Game::Game() : window(nullptr), renderer(nullptr), isRunning(false), player(null
 // Hàm hủy của lớp Game
 Game::~Game() {
     delete player; // Giải phóng bộ nhớ của player
+    SDL_DestroyTexture(logoTexture); // Giải phóng texture logo
     SDL_DestroyRenderer(renderer); // Hủy renderer
     SDL_DestroyWindow(window); // Hủy window
     SDL_Quit(); // Kết thúc SDL
@@ -19,6 +20,11 @@ Game::~Game() {
 bool Game::init() {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) { // Khởi tạo SDL
         cerr << "SDL could not initialize! SDL_Error: " << SDL_GetError() << endl;
+        return false;
+    }
+
+    if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) { // Khởi tạo SDL_image với PNG
+        cerr << "SDL_image could not initialize! IMG_Error: " << IMG_GetError() << endl;
         return false;
     }
 
@@ -33,6 +39,24 @@ bool Game::init() {
         cerr << "Không thể tạo Renderer! SDL_Error: " << SDL_GetError() << endl;
         return false;
     }
+
+    // Tải logo
+    SDL_Surface* logoSurface = IMG_Load("logo.png"); // chèn logo với tên là logo.png
+    if (!logoSurface) {
+        cerr << "Không thể tải logo! IMG_Error: " << IMG_GetError() << endl;
+        return false;
+    }
+    logoTexture = SDL_CreateTextureFromSurface(renderer, logoSurface);
+    SDL_FreeSurface(logoSurface);
+    if (!logoTexture) {
+        cerr << "Không thể tạo texture cho logo! SDL_Error: " << SDL_GetError() << endl;
+        return false;
+    }
+
+    // Đặt vị trí logo: giữa chiều ngang, cách trên 30px
+    int logoWidth, logoHeight;
+    SDL_QueryTexture(logoTexture, NULL, NULL, &logoWidth, &logoHeight); // Lấy kích thước logo
+    logoRect = {(SCREEN_WIDTH - logoWidth) / 2, -135, logoWidth, logoHeight};
 
     setupLevel1(); // Thiết lập Level 1 Easy
     isRunning = true;
@@ -80,6 +104,9 @@ void Game::update() {
 void Game::render() {
     SDL_SetRenderDrawColor(renderer, 0xD2, 0xB4, 0x8C, 0xFF); // Nền nâu nhạt
     SDL_RenderClear(renderer);
+
+    // Vẽ logo
+    SDL_RenderCopy(renderer, logoTexture, NULL, &logoRect);
 
     SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0x99, 0xFF); // Vùng active zone màu vàng nhạt
     SDL_Rect activeZone = {(SCREEN_WIDTH - ACTIVE_ZONE_WIDTH) / 2, (SCREEN_HEIGHT - ACTIVE_ZONE_HEIGHT) / 2, ACTIVE_ZONE_WIDTH, ACTIVE_ZONE_HEIGHT};
