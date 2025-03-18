@@ -11,3 +11,19 @@
 	<SDL.h>
 	<iostream>
 
+1742306817 source:d:\code\24022713_baitaplon\game.cpp
+	"Game.h"
+	"Player.h"
+	<iostream>
+
+1742306969 d:\code\24022713_baitaplon\game.h
+	<SDL.h>
+	<vector>
+
+1742309860 d:\code\24022713_baitaplon\player.h
+	<SDL.h>
+	<vector>
+
+1742309810 source:d:\code\24022713_baitaplon\player.cpp
+	"Player.h"
+
