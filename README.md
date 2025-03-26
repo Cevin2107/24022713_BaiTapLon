@@ -20,8 +20,8 @@ Fall Gravity là một trò chơi platformer 2D đơn giản được viết b�
 - Thư viện cần thiết:
   + SDL2
   + SDL2_image
-- Yêu cầu bổ sung cho Windows:
-  + **Cần cài đặt SDL2 và SDL2_image trong Code::Blocks.**
+- Yêu cầu bổ sung cho Windows nếu dùng Code::Blocks:
+  + **Nếu dùng Code::Blocks thì cần cài đặt SDL2 và SDL2_image.**
   + **Hai file SDL2.dll và SDL2_image.dll phải được sao chép vào thư mục chứa mã nguồn (nơi file .cbp hoặc file thực thi sau khi build) để chạy trò chơi.**
 
 # Cách chơi
@@ -32,3 +32,6 @@ Mục tiêu: Đưa nhân vật đến cổng ở phía bên phải màn hình.
   - W hoặc Mũi tên lên: Nhảy (chỉ nhảy được khi đứng trên sàn).
   - Thua: Nếu nhân vật rơi khỏi màn hình, nhấn phím bất kỳ để chơi lại.
   - Thắng: Chạm vào cổng để qua màn.
+
+# Lưu ý
+**Vì game được code và test bằng Code::Blocks nên sẽ hoạt động tốt trên ứng dụng Code::Blocks; nếu chạy bằng Visual Studio Code thì hãy tự thiết lập SDL2 và các ứng dụng liên quan để chạy code.** 
