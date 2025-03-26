@@ -39,7 +39,7 @@ private:
     const int ACTIVE_ZONE_WIDTH = 856; // Chiều rộng vùng hoạt động
     const int ACTIVE_ZONE_HEIGHT = 121; // Chiều cao vùng hoạt động
     const int FLOOR_THICKNESS = 5; // Độ dày của sàn
-    const int HOLE_WIDTH = 35; // Chiều rộng của lỗ
+    const int HOLE_WIDTH = 50; // Chiều rộng của lỗ
 };
 
 #endif

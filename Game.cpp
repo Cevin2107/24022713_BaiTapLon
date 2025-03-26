@@ -19,12 +19,12 @@ Game::~Game() {
 // Hàm khởi tạo SDL và các thành phần của trò chơi
 bool Game::init() {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) { // Khởi tạo SDL
-        cerr << "SDL could not initialize! SDL_Error: " << SDL_GetError() << endl;
+        cerr << "SDL không thể khởi tạo! SDL_Error: " << SDL_GetError() << endl;
         return false;
     }
 
     if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) { // Khởi tạo SDL_image với PNG
-        cerr << "SDL_image could not initialize! IMG_Error: " << IMG_GetError() << endl;
+        cerr << "SDL_image không thể khởi tạo! IMG_Error: " << IMG_GetError() << endl;
         return false;
     }
 
@@ -53,10 +53,10 @@ bool Game::init() {
         return false;
     }
 
-    // Đặt vị trí logo: giữa chiều ngang, cách trên 30px
+    // Đặt vị trí logo
     int logoWidth, logoHeight;
     SDL_QueryTexture(logoTexture, NULL, NULL, &logoWidth, &logoHeight); // Lấy kích thước logo
-    logoRect = {(SCREEN_WIDTH - logoWidth) / 2, -135, logoWidth, logoHeight};
+    logoRect = {(SCREEN_WIDTH - logoWidth) / 2, -135, logoWidth, logoHeight}; // Ở giữa, và dịch lên trên
 
     setupLevel1(); // Thiết lập Level 1 Easy
     isRunning = true;
@@ -65,21 +65,21 @@ bool Game::init() {
 
 // Thiết lập Level 1 của trò chơi
 void Game::setupLevel1() {
-    const float activeZoneX = (SCREEN_WIDTH - ACTIVE_ZONE_WIDTH) / 2.0f;
+    const float activeZoneX = (SCREEN_WIDTH - ACTIVE_ZONE_WIDTH) / 2.0f; // Tọa độ mép trái vùng hoạt động
     const float activeZoneY = (SCREEN_HEIGHT - ACTIVE_ZONE_HEIGHT) / 2.0f;
     const float floorY = activeZoneY + ACTIVE_ZONE_HEIGHT;
 
-    player = new Player(activeZoneX + 30.0f, floorY - 32.0f, 12, 32); // Tạo nhân vật mới
+    player = new Player(activeZoneX + 30.0f, floorY - 32.0f, 32, 32, renderer); // Thay đổi: width=32, height=32 để khớp frame
 
     const int numHoles = 3;
     const float floorWidth = (ACTIVE_ZONE_WIDTH - numHoles * HOLE_WIDTH) / (numHoles + 1);
-    floorSegments.clear();
+    floorSegments.clear(); // Xóa các đoạn sàn từ game cũ
     for (int i = 0; i <= numHoles; i++) {
         float x = activeZoneX + i * (floorWidth + HOLE_WIDTH);
-        floorSegments.push_back({(int)x, (int)(floorY - FLOOR_THICKNESS), (int)floorWidth, FLOOR_THICKNESS}); // Vẽ sàn (Flat) vào code
+        floorSegments.push_back({(int)x, (int)(floorY - FLOOR_THICKNESS), (int)floorWidth, FLOOR_THICKNESS});
     }
 
-    gate = {(int)(activeZoneX + ACTIVE_ZONE_WIDTH - 50), (int)(floorY - 35), 30, 35}; // Cổng
+    gate = {(int)(activeZoneX + ACTIVE_ZONE_WIDTH - 50), (int)(floorY - 35), 30, 35};
 }
 
 // Cập nhật trạng thái của trò chơi
@@ -112,7 +112,7 @@ void Game::render() {
     SDL_Rect activeZone = {(SCREEN_WIDTH - ACTIVE_ZONE_WIDTH) / 2, (SCREEN_HEIGHT - ACTIVE_ZONE_HEIGHT) / 2, ACTIVE_ZONE_WIDTH, ACTIVE_ZONE_HEIGHT};
     SDL_RenderFillRect(renderer, &activeZone); // Vẽ vùng hoạt động
 
-    SDL_SetRenderDrawColor(renderer, 0x00, 0xFF, 0x00, 0xFF); // Đặt màu cho sàn
+    SDL_SetRenderDrawColor(renderer, 0x8A, 0x67, 0x8F, 0xFF); // Đặt màu cho sàn
     for (const auto& segment : floorSegments) {
         SDL_RenderFillRect(renderer, &segment); // Vẽ các đoạn sàn
     }
