@@ -14,6 +14,7 @@ public:
     void update(const vector<SDL_Rect>& floorSegments);
     void render(SDL_Renderer* renderer);
     SDL_Rect getRect() const;
+    SDL_Texture* getTexture() const;
 
 private:
     float x, y;

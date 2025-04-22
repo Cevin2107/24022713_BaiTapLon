@@ -11,21 +11,21 @@
 	"Game.h"
 	<iostream>
 
-1742965081 source:d:\code\24022713_baitaplon\game.cpp
+1743064552 source:d:\code\24022713_baitaplon\game.cpp
 	"Game.h"
 	"Player.h"
 	<iostream>
 
-1742965200 d:\code\24022713_baitaplon\game.h
+1744767364 d:\code\24022713_baitaplon\game.h
 	<SDL.h>
 	<SDL_image.h>
 	<vector>
 
-1742470959 d:\code\24022713_baitaplon\player.h
+1744767178 d:\code\24022713_baitaplon\player.h
 	<SDL.h>
 	<vector>
 
-1742961442 source:d:\code\24022713_baitaplon\player.cpp
+1744767367 source:d:\code\24022713_baitaplon\player.cpp
 	"Player.h"
 	<SDL_image.h>
 	<iostream>

@@ -28,10 +28,12 @@ private:
     Player* player;
     vector<SDL_Rect> floorSegments; // Danh sách các đoạn sàn
     SDL_Rect gate; // Cổng
+    SDL_Texture* gateTexture; // Texture cho cổng
     bool gameOver;
     bool levelPassed;
     SDL_Texture* logoTexture; // Texture cho logo
     SDL_Rect logoRect;        // Vị trí và kích thước logo
+    bool playerVisible;
 
     // Size màn hình
     const int SCREEN_WIDTH = 1089; // Chiều rộng màn hình
