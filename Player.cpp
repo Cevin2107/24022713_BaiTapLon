@@ -36,12 +36,12 @@ void Player::handleInput(SDL_Event& e, const Uint8* keyState) {
     }
 
     // Chỉ nhảy khi phím W hoặc ↑ được nhấn, nhân vật trên sàn, và canJump là true
-    if ((keyState[SDL_SCANCODE_W] || keyState[SDL_SCANCODE_UP]) && isOnGround && canJump) {
+    if ((keyState[SDL_SCANCODE_W] || keyState[SDL_SCANCODE_UP] || keyState[SDL_SCANCODE_SPACE]) && isOnGround && canJump) {
         yVel = -JUMP_SPEED;
         canJump = false; // Ngăn nhảy lại cho đến khi nhả phím
     }
     // Khi nhả phím W hoặc ↑, cho phép nhảy lần tiếp theo
-    else if (!keyState[SDL_SCANCODE_W] && !keyState[SDL_SCANCODE_UP]) {
+    else if (!keyState[SDL_SCANCODE_W] && !keyState[SDL_SCANCODE_UP] && !keyState[SDL_SCANCODE_SPACE]) {
         canJump = true; // Reset canJump khi phím được nhả
     }
 }

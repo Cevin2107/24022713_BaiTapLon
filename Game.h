@@ -33,7 +33,12 @@ private:
     bool levelPassed;
     SDL_Texture* logoTexture; // Texture cho logo
     SDL_Rect logoRect;        // Vị trí và kích thước logo
+    SDL_Texture* instructionTexture; // Texture cho instruction
+    SDL_Rect instructionRect; // Vị trí và kích thước instruction
     bool playerVisible;
+    bool isInMenu; // Thêm trạng thái menu
+    SDL_Rect startButton; // Nút Start
+    SDL_Rect quitButton; // Nút Quit
 
     // Size màn hình
     const int SCREEN_WIDTH = 1089; // Chiều rộng màn hình
@@ -42,6 +47,11 @@ private:
     const int ACTIVE_ZONE_HEIGHT = 121; // Chiều cao vùng hoạt động
     const int FLOOR_THICKNESS = 5; // Độ dày của sàn
     const int HOLE_WIDTH = 50; // Chiều rộng của lỗ
+
+    // Size nút
+    const int buttonWidth = 350; // Chiều rộng nút
+    const int buttonHeight = 70; // Chiều cao nút
+    const int buttonSpacing = 30; // Khoảng cách giữa hai nút
 };
 
 #endif

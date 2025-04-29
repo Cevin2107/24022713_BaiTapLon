@@ -5,12 +5,18 @@
 using namespace std;
 
 // Hàm khởi tạo của lớp Game
-Game::Game() : window(nullptr), renderer(nullptr), isRunning(false), player(nullptr), gameOver(false), levelPassed(false), playerVisible(true) {}
+Game::Game() : window(nullptr), renderer(nullptr), isRunning(false), player(nullptr), gameOver(false), levelPassed(false), playerVisible(true), isInMenu(true) {
+    // Khởi tạo nút Start và Quit
+    const int startY = (SCREEN_HEIGHT - (buttonHeight * 2 + buttonSpacing)) / 2; // Căn giữa
+    startButton = {(SCREEN_WIDTH - buttonWidth) / 2, startY, buttonWidth, buttonHeight}; // Nút Start ở giữa
+    quitButton = {(SCREEN_WIDTH - buttonWidth) / 2, startY + buttonHeight + buttonSpacing, buttonWidth, buttonHeight}; // Nút Quit ngay dưới
+    }
 
 // Hàm hủy của lớp Game
 Game::~Game() {
     delete player; // Giải phóng bộ nhớ của player
     SDL_DestroyTexture(logoTexture); // Giải phóng texture logo
+    SDL_DestroyTexture(instructionTexture); // Giải phóng texture instruction
     SDL_DestroyTexture(gateTexture); // Giải phóng cổng
     SDL_DestroyRenderer(renderer); // Hủy renderer
     SDL_DestroyWindow(window); // Hủy window
@@ -59,6 +65,19 @@ bool Game::init() {
     SDL_QueryTexture(logoTexture, NULL, NULL, &logoWidth, &logoHeight); // Lấy kích thước logo
     logoRect = {(SCREEN_WIDTH - logoWidth) / 2, -135, logoWidth, logoHeight}; // Ở giữa, và dịch lên trên
 
+    // Tải instruction
+    SDL_Surface* instructionSurface = IMG_Load("instruction.png");
+    if (!instructionSurface) {
+        cerr << "Không thể tải instruction.png! IMG_Error: " << IMG_GetError() << endl;
+        return false;
+    }
+    instructionTexture = SDL_CreateTextureFromSurface(renderer, instructionSurface);
+    SDL_FreeSurface(instructionSurface);
+    if (!instructionTexture) {
+        cerr << "Không thể tạo texture cho instruction! SDL_Error: " << SDL_GetError() << endl;
+        return false;
+    }
+
     // Tải texture cho cổng
     SDL_Surface* gateSurface = IMG_Load("gate.png");
     if (!gateSurface) {
@@ -71,6 +90,12 @@ bool Game::init() {
         cerr << "Không thể tạo texture cho cổng! SDL_Error: " << SDL_GetError() << endl;
         return false;
     }
+    // Đặt vị trí instruction
+    int instructionWidth, instructionHeight;
+    SDL_QueryTexture(instructionTexture, NULL, NULL, &instructionWidth, &instructionHeight);
+    const int activeZoneY = (SCREEN_HEIGHT - ACTIVE_ZONE_HEIGHT) / 2;
+    // const int instructionY = activeZoneY + ACTIVE_ZONE_HEIGHT - 50;
+    instructionRect = {(SCREEN_WIDTH - instructionWidth) / 2, 320, instructionWidth, instructionHeight};
 
     setupLevel1(); // Thiết lập Level 1 Easy
     isRunning = true;
@@ -120,8 +145,19 @@ void Game::render() {
     SDL_SetRenderDrawColor(renderer, 0xD2, 0xB4, 0x8C, 0xFF); // Nền nâu nhạt
     SDL_RenderClear(renderer);
 
+    if (isInMenu) {
+        // Vẽ nút Start (màu xanh lá)
+        SDL_SetRenderDrawColor(renderer, 0x00, 0xFF, 0x00, 0xFF); // Màu xanh lá
+        SDL_RenderFillRect(renderer, &startButton);
+
+        // Vẽ nút Quit (màu đỏ)
+        SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0xFF); // Màu đỏ
+        SDL_RenderFillRect(renderer, &quitButton);
+    } else {
     // Vẽ logo
     SDL_RenderCopy(renderer, logoTexture, NULL, &logoRect);
+    // Vẽ instruction
+    SDL_RenderCopy(renderer, instructionTexture, NULL, &instructionRect);
 
     SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0x99, 0xFF); // Vùng active zone màu vàng nhạt
     SDL_Rect activeZone = {(SCREEN_WIDTH - ACTIVE_ZONE_WIDTH) / 2, (SCREEN_HEIGHT - ACTIVE_ZONE_HEIGHT) / 2, ACTIVE_ZONE_WIDTH, ACTIVE_ZONE_HEIGHT};
@@ -138,7 +174,7 @@ void Game::render() {
     // SDL_SetRenderDrawColor(renderer, 0x80, 0x80, 0x80, 0xFF); // Đặt màu cho cổng
     // SDL_RenderFillRect(renderer, &gate); // Vẽ cổng
     SDL_RenderCopy(renderer, gateTexture, NULL, &gate); // Vẽ cổng bằng texture
-
+    }
     SDL_RenderPresent(renderer); // Cập nhật màn hình
 }
 
@@ -148,10 +184,24 @@ void Game::run() {
         while (SDL_PollEvent(&event) != 0) { // Xử lý các sự kiện
             if (event.type == SDL_QUIT) {
                 isRunning = false;
-            } else if ((gameOver || levelPassed) && event.type == SDL_KEYDOWN) {
+                // Logic khi nhất nút Start Quit
+                } else if (isInMenu && event.type == SDL_MOUSEBUTTONDOWN && event.button.button == SDL_BUTTON_LEFT) {
+                // Lấy tọa độ chuột
+                int mouseX = event.button.x;
+                int mouseY = event.button.y;
+                SDL_Point mousePoint = {mouseX, mouseY};
+                // Kiểm tra nhấn nút Start
+                if (SDL_PointInRect(&mousePoint, &startButton)) {
+                    isInMenu = false; // Chuyển sang màn hình trò chơi
+                }
+                // Kiểm tra nhấn nút Quit
+                else if (SDL_PointInRect(&mousePoint, &quitButton)) {
+                    isRunning = false; // Thoát trò chơi
+                }
+            } else if ((gameOver || levelPassed) && event.type == SDL_KEYDOWN) { // Sửa lại đoạn này xíu
                 setupLevel1(); // Thiết lập lại cấp độ 1
                 gameOver = false; // Đặt lại gameOver
-                levelPassed = false;
+                // levelPassed = false;
                 playerVisible = true;
             }
         }
