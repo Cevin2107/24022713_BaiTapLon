@@ -34,6 +34,10 @@
 		</Compiler>
 		<Unit filename="Game.cpp" />
 		<Unit filename="Game.h" />
+		<Unit filename="GameInitializer.cpp" />
+		<Unit filename="GameInitializer.h" />
+		<Unit filename="LevelSetup.cpp" />
+		<Unit filename="LevelSetup.h" />
 		<Unit filename="Player.cpp" />
 		<Unit filename="Player.h" />
 		<Unit filename="main.cpp" />

@@ -3,125 +3,6 @@
 #include <iostream>
 
 using namespace std;
-
-// Hàm khởi tạo của lớp Game
-Game::Game() : window(nullptr), renderer(nullptr), isRunning(false), player(nullptr), gameOver(false), levelPassed(false), playerVisible(true), isInMenu(true) {
-    // Khởi tạo nút Start và Quit
-    const int startY = (SCREEN_HEIGHT - (buttonHeight * 2 + buttonSpacing)) / 2; // Căn giữa
-    startButton = {(SCREEN_WIDTH - buttonWidth) / 2, startY, buttonWidth, buttonHeight}; // Nút Start ở giữa
-    quitButton = {(SCREEN_WIDTH - buttonWidth) / 2, startY + buttonHeight + buttonSpacing, buttonWidth, buttonHeight}; // Nút Quit ngay dưới
-    }
-
-// Hàm hủy của lớp Game
-Game::~Game() {
-    delete player; // Giải phóng bộ nhớ của player
-    SDL_DestroyTexture(logoTexture); // Giải phóng texture logo
-    SDL_DestroyTexture(instructionTexture); // Giải phóng texture instruction
-    SDL_DestroyTexture(gateTexture); // Giải phóng cổng
-    SDL_DestroyRenderer(renderer); // Hủy renderer
-    SDL_DestroyWindow(window); // Hủy window
-    SDL_Quit(); // Kết thúc SDL
-}
-
-// Hàm khởi tạo SDL và các thành phần của trò chơi
-bool Game::init() {
-    if (SDL_Init(SDL_INIT_VIDEO) < 0) { // Khởi tạo SDL
-        cerr << "SDL không thể khởi tạo! SDL_Error: " << SDL_GetError() << endl;
-        return false;
-    }
-
-    if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) { // Khởi tạo SDL_image với PNG
-        cerr << "SDL_image không thể khởi tạo! IMG_Error: " << IMG_GetError() << endl;
-        return false;
-    }
-
-    window = SDL_CreateWindow("Fall Gravity", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, SCREEN_WIDTH, SCREEN_HEIGHT, SDL_WINDOW_SHOWN); // Tạo cửa sổ
-    if (!window) {
-        cerr << "Không thể tạo cửa sổ Win! SDL_Error: " << SDL_GetError() << endl;
-        return false;
-    }
-
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED); // Tạo renderer
-    if (!renderer) {
-        cerr << "Không thể tạo Renderer! SDL_Error: " << SDL_GetError() << endl;
-        return false;
-    }
-
-    // Tải logo
-    SDL_Surface* logoSurface = IMG_Load("logo.png"); // chèn logo với tên là logo.png
-    if (!logoSurface) {
-        cerr << "Không thể tải logo! IMG_Error: " << IMG_GetError() << endl;
-        return false;
-    }
-    logoTexture = SDL_CreateTextureFromSurface(renderer, logoSurface);
-    SDL_FreeSurface(logoSurface);
-    if (!logoTexture) {
-        cerr << "Không thể tạo texture cho logo! SDL_Error: " << SDL_GetError() << endl;
-        return false;
-    }
-
-    // Đặt vị trí logo
-    int logoWidth, logoHeight;
-    SDL_QueryTexture(logoTexture, NULL, NULL, &logoWidth, &logoHeight); // Lấy kích thước logo
-    logoRect = {(SCREEN_WIDTH - logoWidth) / 2, -135, logoWidth, logoHeight}; // Ở giữa, và dịch lên trên
-
-    // Tải instruction
-    SDL_Surface* instructionSurface = IMG_Load("instruction.png");
-    if (!instructionSurface) {
-        cerr << "Không thể tải instruction.png! IMG_Error: " << IMG_GetError() << endl;
-        return false;
-    }
-    instructionTexture = SDL_CreateTextureFromSurface(renderer, instructionSurface);
-    SDL_FreeSurface(instructionSurface);
-    if (!instructionTexture) {
-        cerr << "Không thể tạo texture cho instruction! SDL_Error: " << SDL_GetError() << endl;
-        return false;
-    }
-
-    // Tải texture cho cổng
-    SDL_Surface* gateSurface = IMG_Load("gate.png");
-    if (!gateSurface) {
-        cerr << "Không thể tải gate.png! IMG_Error: " << IMG_GetError() << endl;
-        return false;
-    }
-    gateTexture = SDL_CreateTextureFromSurface(renderer, gateSurface);
-    SDL_FreeSurface(gateSurface);
-    if (!gateTexture) {
-        cerr << "Không thể tạo texture cho cổng! SDL_Error: " << SDL_GetError() << endl;
-        return false;
-    }
-    // Đặt vị trí instruction
-    int instructionWidth, instructionHeight;
-    SDL_QueryTexture(instructionTexture, NULL, NULL, &instructionWidth, &instructionHeight);
-    const int activeZoneY = (SCREEN_HEIGHT - ACTIVE_ZONE_HEIGHT) / 2;
-    // const int instructionY = activeZoneY + ACTIVE_ZONE_HEIGHT - 50;
-    instructionRect = {(SCREEN_WIDTH - instructionWidth) / 2, 320, instructionWidth, instructionHeight};
-
-    setupLevel1(); // Thiết lập Level 1 Easy
-    isRunning = true;
-    return true;
-}
-
-// Thiết lập Level 1 của trò chơi
-void Game::setupLevel1() {
-    const float activeZoneX = (SCREEN_WIDTH - ACTIVE_ZONE_WIDTH) / 2.0f; // Tọa độ mép trái vùng hoạt động
-    const float activeZoneY = (SCREEN_HEIGHT - ACTIVE_ZONE_HEIGHT) / 2.0f;
-    const float floorY = activeZoneY + ACTIVE_ZONE_HEIGHT;
-
-    player = new Player(activeZoneX + 30.0f, floorY - 32.0f, 32, 32, renderer);
-
-    const int numHoles = 3;
-    const float floorWidth = (ACTIVE_ZONE_WIDTH - numHoles * HOLE_WIDTH) / (numHoles + 1);
-    floorSegments.clear(); // Xóa các đoạn sàn từ game cũ
-    for (int i = 0; i <= numHoles; i++) {
-        float x = activeZoneX + i * (floorWidth + HOLE_WIDTH);
-        floorSegments.push_back({(int)x, (int)(floorY - FLOOR_THICKNESS), (int)floorWidth, FLOOR_THICKNESS});
-    }
-
-    gate = {(int)(activeZoneX + ACTIVE_ZONE_WIDTH - 50), (int)(floorY - 45), 45, 45}; // Đặt vị trí và kích cỡ cổng
-    playerVisible = true; // Nhân vật hiển thị khi chơi
-}
-
 // Cập nhật trạng thái của trò chơi
 void Game::update() {
     const Uint8* keyState = SDL_GetKeyboardState(NULL);
@@ -146,13 +27,23 @@ void Game::render() {
     SDL_RenderClear(renderer);
 
     if (isInMenu) {
-        // Vẽ nút Start (màu xanh lá)
-        SDL_SetRenderDrawColor(renderer, 0x00, 0xFF, 0x00, 0xFF); // Màu xanh lá
-        SDL_RenderFillRect(renderer, &startButton);
+        // Vẽ Start.png
+        if (startButtonTexture) {
+            SDL_RenderCopy(renderer, startButtonTexture, NULL, &startButtonRect);
+        } else {
+            cerr << "Lỗi: startButtonTexture là nullptr!" << endl;
+            SDL_SetRenderDrawColor(renderer, 0x00, 0xFF, 0x00, 0xFF);
+            SDL_RenderFillRect(renderer, &startButton);
+        }
 
-        // Vẽ nút Quit (màu đỏ)
-        SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0xFF); // Màu đỏ
-        SDL_RenderFillRect(renderer, &quitButton);
+        // Vẽ Quit.png
+        if (quitButtonTexture) {
+            SDL_RenderCopy(renderer, quitButtonTexture, NULL, &quitButtonRect);
+        } else {
+            cerr << "Lỗi: quitButtonTexture là nullptr!" << endl;
+            SDL_SetRenderDrawColor(renderer, 0xFF, 0x00, 0x00, 0xFF);
+            SDL_RenderFillRect(renderer, &quitButton);
+        }
     } else {
     // Vẽ logo
     SDL_RenderCopy(renderer, logoTexture, NULL, &logoRect);

@@ -39,6 +39,10 @@ private:
     bool isInMenu; // Thêm trạng thái menu
     SDL_Rect startButton; // Nút Start
     SDL_Rect quitButton; // Nút Quit
+    SDL_Texture* startButtonTexture; // Texture cho Start.png
+    SDL_Texture* quitButtonTexture;  // Texture cho Quit.png
+    SDL_Rect startButtonRect;        // Vùng hiển thị Start.png
+    SDL_Rect quitButtonRect;         // Vùng hiển thị Quit.png
 
     // Size màn hình
     const int SCREEN_WIDTH = 1089; // Chiều rộng màn hình
