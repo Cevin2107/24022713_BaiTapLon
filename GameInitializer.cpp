@@ -60,7 +60,7 @@ bool Game::init() {
     backgroundRect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
 
     // Tải logo
-    SDL_Surface* logoSurface = IMG_Load("logo.png"); // chèn logo với tên là logo.png
+    SDL_Surface* logoSurface = IMG_Load("logo.png"); // chèn logo với tên là logo
     if (!logoSurface) {
         cerr << "Không thể tải logo! IMG_Error: " << IMG_GetError() << endl;
         return false;
@@ -156,6 +156,9 @@ bool Game::init() {
     }
 
     setupLevel1(); // Thiết lập Level 1 Easy
+    currentLevel = 1;
     isRunning = true;
     return true;
+
+
 }

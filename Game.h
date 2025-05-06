@@ -18,6 +18,7 @@ public:
 
 private:
     void setupLevel1();
+    void setupLevel2();
     void update();
     void render();
 
@@ -45,6 +46,7 @@ private:
     SDL_Rect quitButtonRect;         // Vùng hiển thị Quit
     SDL_Texture* backgroundTexture; // Texture cho Background
     SDL_Rect backgroundRect;         // Vị trí cho Background
+    int currentLevel;
 
     // Size màn hình
     const int SCREEN_WIDTH = 1089; // Chiều rộng màn hình

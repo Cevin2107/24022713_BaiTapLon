@@ -23,12 +23,12 @@ private:
     bool canJump; // Nhảy 1 lần khi nhấn hay giữ W
 
     // Texture nhân vật
-    SDL_Texture* playerTexture;         // Texture cho nhân vật
-    SDL_Rect currentFrame;              // Frame
-    int frameCount;                     // Đếm frame
-    int currentFrameIndex;              // Chỉ số frame hiện tại
-    float frameTime;                    // Thời gian mỗi frame (setup 5FPS tương ứng 0.2 1 frame)
-    float frameTimer;                   // Bộ đếm thời gian để chuyển frame
+    SDL_Texture* playerTexture; // Texture cho nhân vật
+    SDL_Rect currentFrame; // Frame
+    int frameCount; // Đếm frame
+    int currentFrameIndex; // Chỉ số frame hiện tại
+    float frameTime; // Thời gian mỗi frame (setup 5FPS tương ứng 0.2 1 frame)
+    float frameTimer; // Bộ đếm thời gian để chuyển frame
 
     const float SPEED = 0.075f; // Tốc độ chạy
     const float JUMP_SPEED = 0.4f; // Độ nhảy

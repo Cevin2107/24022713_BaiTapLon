@@ -18,7 +18,11 @@ void Game::update() {
     if (SDL_HasIntersection(&playerRect, &gate)) { // Kiểm tra nếu nhân vật chạm vào cổng
         levelPassed = true;
         playerVisible = false;
-        cout << "Easy Pass!" << endl; // Thắng thì qua màn Level 1
+        if (currentLevel == 1) {
+            cout << "Level 1 Passed! Moving to Level 2!" << endl;
+        } else if (currentLevel == 2) {
+            cout << "Level 2 Passed! Game Complete!" << endl;
+        }
     }
 }
 // Vẽ các thành phần của trò chơi lên màn hình
@@ -91,10 +95,22 @@ void Game::run() {
                     isRunning = false; // Thoát trò chơi
                 }
             } else if ((gameOver || levelPassed) && event.type == SDL_KEYDOWN) { // Sửa lại đoạn này xíu
-                setupLevel1(); // Thiết lập lại cấp độ 1
-                gameOver = false; // Đặt lại gameOver
-                // levelPassed = false;
-                playerVisible = true;
+                if (gameOver) {
+                    setupLevel1(); // Restart at Level 1 on game over
+                    currentLevel = 1;
+                    gameOver = false;
+                    playerVisible = true;
+                } else if (levelPassed && currentLevel == 1) {
+                    setupLevel2(); // Move to Level 2
+                    currentLevel = 2;
+                    levelPassed = false;
+                    playerVisible = true;
+                } else if (levelPassed && currentLevel == 2) {
+                    setupLevel1(); // Loop back to Level 1 after completing Level 2
+                    currentLevel = 1;
+                    levelPassed = false;
+                    playerVisible = true;
+                }
             }
         }
 
