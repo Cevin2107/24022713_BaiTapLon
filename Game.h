@@ -21,6 +21,7 @@ private:
     void setupLevel2();
     void update();
     void render();
+    void renderTextureOrRect(SDL_Renderer* renderer, SDL_Texture* texture, const SDL_Rect& rect, Uint8 r, Uint8 g, Uint8 b);
 
     SDL_Window* window;
     SDL_Renderer* renderer;

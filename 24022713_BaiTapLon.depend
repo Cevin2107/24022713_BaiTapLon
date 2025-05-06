@@ -11,32 +11,31 @@
 	"Game.h"
 	<iostream>
 
-1746502488 source:d:\code\24022713_baitaplon\game.cpp
+1746549035 source:d:\code\24022713_baitaplon\game.cpp
 	"Game.h"
 	"Player.h"
 	<iostream>
 
-1746544310 d:\code\24022713_baitaplon\game.h
+1746549113 d:\code\24022713_baitaplon\game.h
 	<SDL.h>
 	<SDL_image.h>
 	<vector>
 
-1746501793 d:\code\24022713_baitaplon\player.h
+1746548486 d:\code\24022713_baitaplon\player.h
 	<SDL.h>
 	<vector>
 
-1745887029 source:d:\code\24022713_baitaplon\player.cpp
+1746548966 source:d:\code\24022713_baitaplon\player.cpp
 	"Player.h"
 	<SDL_image.h>
 	<iostream>
-	<bits/stdc++.h>
 
-1746500102 source:d:\code\24022713_baitaplon\gameinitializer.cpp
+1746545671 source:d:\code\24022713_baitaplon\gameinitializer.cpp
 	"Game.h"
 	"Player.h"
 	<iostream>
 
-1746544720 source:d:\code\24022713_baitaplon\levelsetup.cpp
+1746545671 source:d:\code\24022713_baitaplon\levelsetup.cpp
 	"Game.h"
 	"Player.h"
 
