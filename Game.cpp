@@ -27,6 +27,7 @@ void Game::render() {
     SDL_RenderClear(renderer);
 
     if (isInMenu) {
+        SDL_RenderCopy(renderer, backgroundTexture, NULL, &backgroundRect);
         // Vẽ Start.png
         if (startButtonTexture) {
             SDL_RenderCopy(renderer, startButtonTexture, NULL, &startButtonRect);

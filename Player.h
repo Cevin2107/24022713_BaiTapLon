@@ -30,9 +30,9 @@ private:
     float frameTime;                    // Thời gian mỗi frame (setup 5FPS tương ứng 0.2 1 frame)
     float frameTimer;                   // Bộ đếm thời gian để chuyển frame
 
-    const float SPEED = 0.12f; // Tốc độ chạy
-    const float JUMP_SPEED = 0.7f; // Độ nhảy
-    const float GRAVITY = 0.003f; // Trọng lực
+    const float SPEED = 0.075f; // Tốc độ chạy
+    const float JUMP_SPEED = 0.4f; // Độ nhảy
+    const float GRAVITY = 0.001f; // Trọng lực
 };
 
 #endif

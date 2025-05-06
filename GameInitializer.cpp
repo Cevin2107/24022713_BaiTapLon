@@ -5,12 +5,7 @@
 using namespace std;
 
 // Hàm khởi tạo của lớp Game
-Game::Game() : window(nullptr), renderer(nullptr), isRunning(false), player(nullptr), gameOver(false), levelPassed(false), playerVisible(true), isInMenu(true), instructionTexture(nullptr), startButtonTexture(nullptr), quitButtonTexture(nullptr) {
-    // Khởi tạo nút Start và Quit
-    const int startY = (SCREEN_HEIGHT - (buttonHeight * 2 + buttonSpacing)) / 2; // Căn giữa
-    startButton = {(SCREEN_WIDTH - buttonWidth) / 2, startY, buttonWidth, buttonHeight}; // Nút Start ở giữa
-    quitButton = {(SCREEN_WIDTH - buttonWidth) / 2, startY + buttonHeight + buttonSpacing, buttonWidth, buttonHeight}; // Nút Quit ngay dưới
-    }
+Game::Game() : window(nullptr), renderer(nullptr), isRunning(false), player(nullptr), gameOver(false), levelPassed(false), playerVisible(true), isInMenu(true), instructionTexture(nullptr), startButtonTexture(nullptr), quitButtonTexture(nullptr) {}
 
 // Hàm hủy của lớp Game
 Game::~Game() {
@@ -22,6 +17,7 @@ Game::~Game() {
     SDL_DestroyWindow(window); // Hủy window
     SDL_DestroyTexture(startButtonTexture); // Hủy texture Start
     SDL_DestroyTexture(quitButtonTexture);  // Hủy texture Quit
+    SDL_DestroyTexture(backgroundTexture); // Hủy Background
     SDL_Quit(); // Kết thúc SDL
 }
 
@@ -49,6 +45,20 @@ bool Game::init() {
         return false;
     }
 
+    // Tải background
+    SDL_Surface* backgroundSurface = IMG_Load("Background.png");
+    if (!backgroundSurface) {
+        cerr << "Không thể tải Background.png! IMG_Error: " << IMG_GetError() << endl;
+        return false;
+    }
+    backgroundTexture = SDL_CreateTextureFromSurface(renderer, backgroundSurface);
+    SDL_FreeSurface(backgroundSurface);
+    if (!backgroundTexture) {
+        cerr << "Không thể tạo texture cho Background! SDL_Error: " << SDL_GetError() << endl;
+        return false;
+    }
+    backgroundRect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
+
     // Tải logo
     SDL_Surface* logoSurface = IMG_Load("logo.png"); // chèn logo với tên là logo.png
     if (!logoSurface) {
@@ -65,7 +75,7 @@ bool Game::init() {
     // Đặt vị trí logo
     int logoWidth, logoHeight;
     SDL_QueryTexture(logoTexture, NULL, NULL, &logoWidth, &logoHeight); // Lấy kích thước logo
-    logoRect = {(SCREEN_WIDTH - logoWidth) / 2, -135, logoWidth, logoHeight}; // Ở giữa, và dịch lên trên
+    logoRect = {(SCREEN_WIDTH - logoWidth) / 2, 30, logoWidth, logoHeight}; // Ở giữa, và dịch lên trên
 
     // Tải instruction
     SDL_Surface* instructionSurface = IMG_Load("instruction.png");
@@ -80,7 +90,17 @@ bool Game::init() {
         return false;
     }
 
-    // Tải Start.png
+    // Đặt vị trí instruction
+    int instructionWidth, instructionHeight;
+    SDL_QueryTexture(instructionTexture, NULL, NULL, &instructionWidth, &instructionHeight);
+    instructionRect = {(SCREEN_WIDTH - instructionWidth) / 2, 320, instructionWidth, instructionHeight};
+
+    // Khởi tạo nút Start và Quit
+    const int startY = ((SCREEN_HEIGHT - (buttonHeight * 2 + buttonSpacing)) / 2 ) + 50; // Căn giữa
+    startButton = {(SCREEN_WIDTH - buttonWidth) / 2, startY, buttonWidth, buttonHeight}; // Nút Start ở giữa
+    quitButton = {(SCREEN_WIDTH - buttonWidth) / 2, startY + buttonHeight + buttonSpacing, buttonWidth, buttonHeight}; // Nút Quit ngay dưới
+
+    // Tải Start
     SDL_Surface* startSurface = IMG_Load("Start.png");
     if (!startSurface) {
         cerr << "Không thể tải Start.png! IMG_Error: " << IMG_GetError() << endl;
@@ -93,15 +113,15 @@ bool Game::init() {
         return false;
     }
 
-    // Đặt vị trí Start.png (thu nhỏ để vừa nút)
+    // Đặt vị trí Start
     startButtonRect = {
         startButton.x,
         startButton.y,
-        buttonWidth, // 200
-        buttonHeight // 50
+        buttonWidth,
+        buttonHeight
     };
 
-    // Tải Quit.png
+    // Tải Quit
     SDL_Surface* quitSurface = IMG_Load("Quit.png");
     if (!quitSurface) {
         cerr << "Không thể tải Quit.png! IMG_Error: " << IMG_GetError() << endl;
@@ -114,12 +134,12 @@ bool Game::init() {
         return false;
     }
 
-    // Đặt vị trí Quit.png (thu nhỏ để vừa nút)
+    // Đặt vị trí Quit
     quitButtonRect = {
         quitButton.x,
         quitButton.y,
-        buttonWidth, // 200
-        buttonHeight // 50
+        buttonWidth,
+        buttonHeight
     };
 
     // Tải texture cho cổng
@@ -134,10 +154,6 @@ bool Game::init() {
         cerr << "Không thể tạo texture cho cổng! SDL_Error: " << SDL_GetError() << endl;
         return false;
     }
-    // Đặt vị trí instruction
-    int instructionWidth, instructionHeight;
-    SDL_QueryTexture(instructionTexture, NULL, NULL, &instructionWidth, &instructionHeight);
-    instructionRect = {(SCREEN_WIDTH - instructionWidth) / 2, 320, instructionWidth, instructionHeight};
 
     setupLevel1(); // Thiết lập Level 1 Easy
     isRunning = true;
