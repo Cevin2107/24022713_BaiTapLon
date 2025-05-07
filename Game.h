@@ -22,6 +22,7 @@ private:
     void update();
     void render();
     void renderTextureOrRect(SDL_Renderer* renderer, SDL_Texture* texture, const SDL_Rect& rect, Uint8 r, Uint8 g, Uint8 b);
+    bool checkSpikeCollision();
 
     SDL_Window* window;
     SDL_Renderer* renderer;
@@ -29,6 +30,7 @@ private:
     SDL_Event event;
     Player* player;
     vector<SDL_Rect> floorSegments; // Danh sách các đoạn sàn
+    vector<SDL_Rect> spikes; // Danh sách các gai
     SDL_Rect gate; // Cổng
     SDL_Texture* gateTexture; // Texture cho cổng
     bool gameOver;

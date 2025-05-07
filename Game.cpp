@@ -11,9 +11,10 @@ void Game::update() {
     player->handleInput(event, keyState);
     player->update(floorSegments);
 
-    // Kiểm tra game over (nhân vật rơi khỏi màn hình)
-    if (player->getRect().y > SCREEN_HEIGHT) {
+    // Kiểm tra game over (rơi khỏi màn hình hoặc chạm gai)
+    if (player->getRect().y > SCREEN_HEIGHT || checkSpikeCollision()) {
         gameOver = true;
+        playerVisible = false;
         cout << "Game Over! Press any key to restart!" << endl;
     }
 
@@ -22,6 +23,9 @@ void Game::update() {
     if (SDL_HasIntersection(&playerRect, &gate)) {
         levelPassed = true;
         playerVisible = false;
+        if (currentLevel == 2) {
+            spikes.clear();
+        }
         if (currentLevel == 1) {
             cout << "Level 1 Passed! Moving to Level 2!" << endl;
         } else if (currentLevel == 2) {
@@ -39,6 +43,38 @@ void Game::renderTextureOrRect(SDL_Renderer* renderer, SDL_Texture* texture, con
         SDL_SetRenderDrawColor(renderer, r, g, b, 0xFF);
         SDL_RenderFillRect(renderer, &rect);
     }
+}
+
+// Vẽ hình tam giác đầy (filled triangle)
+void renderFilledTriangle(SDL_Renderer* renderer, int x1, int y1, int x2, int y2, int x3, int y3, Uint8 r, Uint8 g, Uint8 b) {
+    SDL_SetRenderDrawColor(renderer, r, g, b, 0xFF);
+
+    // Sắp xếp các đỉnh theo y (y1 <= y2 <= y3)
+    if (y1 > y2) { swap(x1, x2); swap(y1, y2); }
+    if (y1 > y3) { swap(x1, x3); swap(y1, y3); }
+    if (y2 > y3) { swap(x2, x3); swap(y2, y3); }
+
+    // Vẽ tam giác bằng cách điền các đường ngang
+    for (int y = y1; y <= y3; y++) {
+        int x_start, x_end;
+        if (y <= y2) {
+            // Phần trên của tam giác (y1 đến y2)
+            x_start = x1 + (y - y1) * (x2 - x1) / (y2 - y1 + 1);
+            x_end = x1 + (y - y1) * (x3 - x1) / (y3 - y1 + 1);
+        } else {
+            // Phần dưới của tam giác (y2 đến y3)
+            x_start = x2 + (y - y2) * (x3 - x2) / (y3 - y2 + 1);
+            x_end = x1 + (y - y1) * (x3 - x1) / (y3 - y1 + 1);
+        }
+        if (x_start > x_end) swap(x_start, x_end);
+        SDL_RenderDrawLine(renderer, x_start, y, x_end, y);
+    }
+
+    // Vẽ viền tam giác cho rõ ràng
+    SDL_SetRenderDrawColor(renderer, r, g, b, 0xFF);
+    SDL_RenderDrawLine(renderer, x1, y1, x2, y2);
+    SDL_RenderDrawLine(renderer, x2, y2, x3, y3);
+    SDL_RenderDrawLine(renderer, x3, y3, x1, y1);
 }
 
 // Vẽ các thành phần trò chơi lên màn hình
@@ -59,18 +95,27 @@ void Game::render() {
 
         // Vẽ vùng hoạt động (vàng nhạt)
         SDL_SetRenderDrawColor(renderer, 0xFF, 0xFF, 0x99, 0xFF);
-        SDL_Rect activeZone = {
-            (SCREEN_WIDTH - ACTIVE_ZONE_WIDTH) / 2,
-            (SCREEN_HEIGHT - ACTIVE_ZONE_HEIGHT) / 2,
-            ACTIVE_ZONE_WIDTH,
-            ACTIVE_ZONE_HEIGHT
-        };
+        SDL_Rect activeZone = {(SCREEN_WIDTH - ACTIVE_ZONE_WIDTH) / 2, (SCREEN_HEIGHT - ACTIVE_ZONE_HEIGHT) / 2, ACTIVE_ZONE_WIDTH, ACTIVE_ZONE_HEIGHT};
         SDL_RenderFillRect(renderer, &activeZone);
 
         // Vẽ các đoạn sàn (màu tím đậm)
         SDL_SetRenderDrawColor(renderer, 0x8A, 0x67, 0x8F, 0xFF);
         for (const auto& segment : floorSegments) {
             SDL_RenderFillRect(renderer, &segment);
+        }
+
+        // Vẽ các gai (màu đỏ)
+        if (currentLevel == 2 && !levelPassed && !gameOver) {
+            SDL_SetRenderDrawColor(renderer, 0x00, 0x00, 0xFF, 0xFF);
+            for (const auto& spike : spikes) {
+                int x1 = spike.x + spike.w / 2; // Đỉnh trên
+                int y1 = spike.y;
+                int x2 = spike.x; // Đáy trái
+                int y2 = spike.y + spike.h;
+                int x3 = spike.x + spike.w; // Đáy phải
+                int y3 = spike.y + spike.h;
+                renderFilledTriangle(renderer, x1, y1, x2, y2, x3, y3, 0x8A, 0x67, 0x8F);
+            }
         }
 
         // Vẽ nhân vật nếu được hiển thị
@@ -84,6 +129,20 @@ void Game::render() {
 
     // Cập nhật màn hình
     SDL_RenderPresent(renderer);
+}
+
+// Kiểm tra va chạm giữa nhân vật và gai
+bool Game::checkSpikeCollision() {
+    if (currentLevel != 2) {
+        return false; // Không kiểm tra va chạm gai ngoài Level 2
+    }
+    SDL_Rect playerRect = player->getRect();
+    for (const auto& spike : spikes) {
+        if (SDL_HasIntersection(&playerRect, &spike)) {
+            return true;
+        }
+    }
+    return false;
 }
 
 // Vòng lặp chính của trò chơi
@@ -106,6 +165,7 @@ void Game::run() {
             } else if ((gameOver || levelPassed) && event.type == SDL_KEYDOWN) {
                 // Xử lý chuyển level hoặc khởi động lại
                 if (gameOver) {
+                    spikes.clear();
                     setupLevel1();
                     currentLevel = 1;
                     gameOver = false;
@@ -116,6 +176,7 @@ void Game::run() {
                     levelPassed = false;
                     playerVisible = true;
                 } else if (levelPassed && currentLevel == 2) {
+                    spikes.clear();
                     setupLevel1();
                     currentLevel = 1;
                     levelPassed = false;

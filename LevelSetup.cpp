@@ -31,6 +31,10 @@ void Game::setupLevel2() {
     delete player;
     player = new Player(activeZoneX + 30.0f, floorY - 32.0f, 32, 32, renderer);
 
+    // Reset sàn và gai
+    floorSegments.clear();
+    spikes.clear();
+
     floorSegments.clear();
 
     // Sàn đầu
@@ -41,7 +45,7 @@ void Game::setupLevel2() {
 
     // Sàn thứ nhất
     const int stepWidth = 70;
-    const int stepHeight = 15; // Height difference between steps
+    const int stepHeight = 15;
     const float step1X = activeZoneX + startFloorWidth + HOLE_WIDTH;
     const float step1Y = floorY - stepHeight;
     floorSegments.push_back({(int)step1X, (int)(step1Y - FLOOR_THICKNESS), stepWidth, FLOOR_THICKNESS});
@@ -62,6 +66,11 @@ void Game::setupLevel2() {
     const int finalFloorWidth = 316;
     const float finalFloorX = step3X + shortPlatformWidth2 + HOLE_WIDTH;
     floorSegments.push_back({(int)finalFloorX, (int)(floorY - FLOOR_THICKNESS), finalFloorWidth, FLOOR_THICKNESS});
+
+    // Thêm gai trên sàn cuối
+    const int spikeWidth = 20;
+    const int spikeHeight = 15;
+    spikes.push_back({(int)(finalFloorX + 50), (int)(floorY - FLOOR_THICKNESS - spikeHeight), spikeWidth, spikeHeight});
 
     // Đặt cổng
     gate = {(int)(finalFloorX + finalFloorWidth - 50), (int)(floorY - 45), 45, 45};

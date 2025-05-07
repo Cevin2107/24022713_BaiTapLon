@@ -30,7 +30,7 @@ Game::Game()
       gameOver(false), levelPassed(false), playerVisible(true), isInMenu(true),
       logoTexture(nullptr), instructionTexture(nullptr),
       startButtonTexture(nullptr), quitButtonTexture(nullptr),
-      gateTexture(nullptr), backgroundTexture(nullptr) {}
+      gateTexture(nullptr), backgroundTexture(nullptr), spikes() {}
 
 // Hàm hủy của lớp Game
 Game::~Game() {
